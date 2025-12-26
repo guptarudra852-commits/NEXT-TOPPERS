@@ -1,0 +1,8 @@
+{
+  "name": "NextToppers Pro",
+  "description": "A high-performance educational platform featuring live classes, batch management, interactive polls, and AI-powered tutoring summaries.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
