@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { Batch, User, UserRole } from './types';
 
 export const MOCK_USER_STUDENT: User = {
@@ -19,29 +18,44 @@ export const MOCK_USER_ADMIN: User = {
 export const BATCHES: Batch[] = [
   {
     id: 'b1',
-    name: 'Physics Excellence 2024',
-    subject: 'Physics',
-    teacher: 'Dr. Sarah Smith',
-    image: 'https://picsum.photos/seed/physics/400/225',
-    studentsCount: 1240,
-    nextClass: 'Today, 4:00 PM'
+    name: 'ABHAY 9th & 10th',
+    subject: 'Foundation',
+    teacher: 'Team NextToppers',
+    image: 'https://nexttoppers.com/uploads/banners/1723812833.webp',
+    studentsCount: 15400,
+    nextClass: 'Today, 5:00 PM',
+    progress: 0,
+    price: '₹999',
+    validity: 'June 2025',
+    tag: 'BESTSELLER',
+    createdAt: new Date('2024-01-15').toISOString()
   },
   {
     id: 'b2',
-    name: 'Organic Chemistry Mastery',
-    subject: 'Chemistry',
-    teacher: 'Prof. Mark Lee',
-    image: 'https://picsum.photos/seed/chemistry/400/225',
-    studentsCount: 850,
-    nextClass: 'Tomorrow, 10:00 AM'
+    name: 'NIRBHAY PRO CUET',
+    subject: 'Entrance',
+    teacher: 'Expert Faculty',
+    image: 'https://nexttoppers.com/uploads/banners/1723812850.webp',
+    studentsCount: 8500,
+    nextClass: 'Tomorrow, 10:00 AM',
+    progress: 0,
+    price: '₹1,299',
+    validity: 'Till Exam',
+    tag: 'FAST FILLING',
+    createdAt: new Date('2024-02-10').toISOString()
   },
   {
     id: 'b3',
-    name: 'Advanced Calculus Bootcamp',
-    subject: 'Mathematics',
-    teacher: 'James Wilson',
-    image: 'https://picsum.photos/seed/math/400/225',
-    studentsCount: 2100,
-    nextClass: 'Monday, 2:00 PM'
+    name: 'UP/BIHAR BOARD 12th',
+    subject: 'Science',
+    teacher: 'State Experts',
+    image: 'https://nexttoppers.com/uploads/banners/1723812875.webp',
+    studentsCount: 21000,
+    nextClass: 'Monday, 2:00 PM',
+    progress: 0,
+    price: '₹799',
+    validity: '2025 Boards',
+    tag: 'NEW',
+    createdAt: new Date('2024-03-01').toISOString()
   }
 ];

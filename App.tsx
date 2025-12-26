@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect } from 'react';
-import { User, UserRole, AppView, Batch } from './types';
-import { MOCK_USER_STUDENT, MOCK_USER_ADMIN, BATCHES } from './constants';
+import React, { useState } from 'react';
+import { User, UserRole, AppView, Batch, SiteConfig, StudyMaterial } from './types';
+import { MOCK_USER_STUDENT, MOCK_USER_ADMIN, BATCHES as INITIAL_BATCHES } from './constants';
 import LandingPage from './components/LandingPage';
 import Dashboard from './components/Dashboard';
 import LiveClassRoom from './components/LiveClassRoom';
@@ -11,7 +11,20 @@ import Navbar from './components/Navbar';
 const App: React.FC = () => {
   const [view, setView] = useState<AppView>('LANDING');
   const [user, setUser] = useState<User | null>(null);
+  const [batches, setBatches] = useState<Batch[]>(INITIAL_BATCHES);
   const [activeBatch, setActiveBatch] = useState<Batch | null>(null);
+  const [globalAnnouncement, setGlobalAnnouncement] = useState<string | null>(null);
+  
+  // Dynamic Site Configuration (Banners)
+  const [siteConfig, setSiteConfig] = useState<SiteConfig>({
+    heroBanner: 'https://nexttoppers.com/uploads/banners/1723812833.webp',
+    trendingBanners: [
+      "https://nexttoppers.com/uploads/banners/1723812833.webp",
+      "https://nexttoppers.com/uploads/banners/1723812850.webp",
+      "https://nexttoppers.com/uploads/banners/1723812875.webp",
+      "https://nexttoppers.com/uploads/banners/1723812885.webp"
+    ]
+  });
 
   const handleLogin = (role: UserRole) => {
     const mockUser = role === UserRole.ADMIN ? MOCK_USER_ADMIN : MOCK_USER_STUDENT;
@@ -23,6 +36,7 @@ const App: React.FC = () => {
     setUser(null);
     setView('LANDING');
     setActiveBatch(null);
+    setGlobalAnnouncement(null);
   };
 
   const joinLive = (batch: Batch) => {
@@ -34,21 +48,63 @@ const App: React.FC = () => {
     }
   };
 
+  const handleAddBatch = (newBatch: Batch) => {
+    setBatches(prev => [{ ...newBatch, materials: [] }, ...prev]);
+  };
+
+  const handleUpdateBatch = (updatedBatch: Batch) => {
+    setBatches(prev => prev.map(b => b.id === updatedBatch.id ? updatedBatch : b));
+  };
+
+  const handleAddMaterialToBatch = (batchId: string, material: StudyMaterial) => {
+    setBatches(prev => prev.map(b => {
+      if (b.id === batchId) {
+        return {
+          ...b,
+          materials: [...(b.materials || []), material]
+        };
+      }
+      return b;
+    }));
+  };
+
+  const handleDeleteMaterial = (batchId: string, materialId: string) => {
+    setBatches(prev => prev.map(b => {
+      if (b.id === batchId) {
+        return {
+          ...b,
+          materials: (b.materials || []).filter(m => m.id !== materialId)
+        };
+      }
+      return b;
+    }));
+  };
+
+  const handleUpdateSiteConfig = (newConfig: SiteConfig) => {
+    setSiteConfig(newConfig);
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <Navbar 
         user={user} 
         onLogout={handleLogout} 
+        onLogin={handleLogin}
         onNavigate={setView} 
         currentView={view} 
       />
       
       <main className="flex-1 overflow-hidden flex flex-col">
-        {view === 'LANDING' && <LandingPage onLogin={handleLogin} />}
+        {view === 'LANDING' && (
+          <LandingPage 
+            siteConfig={siteConfig} 
+            onLogin={handleLogin} 
+          />
+        )}
         {view === 'DASHBOARD' && user && (
           <Dashboard 
             user={user} 
-            batches={BATCHES} 
+            batches={batches} 
             onJoinLive={joinLive} 
           />
         )}
@@ -56,6 +112,7 @@ const App: React.FC = () => {
           <LiveClassRoom 
             user={user} 
             batch={activeBatch} 
+            announcement={globalAnnouncement}
             onLeave={() => setView('DASHBOARD')}
           />
         )}
@@ -63,38 +120,19 @@ const App: React.FC = () => {
           <AdminPanel 
             user={user} 
             batch={activeBatch} 
+            allBatches={batches}
+            siteConfig={siteConfig}
+            onUpdateSiteConfig={handleUpdateSiteConfig}
+            currentBroadcast={globalAnnouncement}
+            onBroadcast={setGlobalAnnouncement}
+            onAddBatch={handleAddBatch}
+            onUpdateBatch={handleUpdateBatch}
+            onAddMaterial={handleAddMaterialToBatch}
+            onDeleteMaterial={handleDeleteMaterial}
             onLeave={() => setView('DASHBOARD')}
           />
         )}
       </main>
-
-      {/* Footer */}
-      {view === 'LANDING' && (
-        <footer className="bg-slate-900 text-white py-12 px-6">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="col-span-1 md:col-span-2">
-              <h2 className="text-2xl font-bold mb-4">NextToppers Pro</h2>
-              <p className="text-slate-400 max-w-sm">Empowering students with world-class live education and cutting-edge AI features. Join the elite community of toppers today.</p>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Quick Links</h3>
-              <ul className="space-y-2 text-slate-400">
-                <li><a href="#" className="hover:text-blue-400">About Us</a></li>
-                <li><a href="#" className="hover:text-blue-400">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-blue-400">Terms of Service</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4">Support</h3>
-              <ul className="space-y-2 text-slate-400">
-                <li><a href="#" className="hover:text-blue-400">Help Center</a></li>
-                <li><a href="#" className="hover:text-blue-400">Contact Us</a></li>
-                <li><a href="#" className="hover:text-blue-400">Live Support</a></li>
-              </ul>
-            </div>
-          </div>
-        </footer>
-      )}
     </div>
   );
 };
